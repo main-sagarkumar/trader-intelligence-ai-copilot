@@ -97,3 +97,11 @@ uv run python -m scripts.evaluate
 ```
 
 The command prints metric percentages and exits non-zero on any regression.
+
+## Observability
+
+Every HTTP response includes `X-Request-ID`; callers may provide their own ID
+for correlation. Privacy-safe structured events record routes, categories,
+document counts, guardrail reasons, and stage latency without questions,
+answers, prompts, trader metrics, tokens, or PII. `GET /ready` checks required
+configuration, PostgreSQL, and Chroma initialization without calling Gemini.

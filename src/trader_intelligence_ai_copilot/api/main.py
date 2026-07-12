@@ -8,6 +8,7 @@ from trader_intelligence_ai_copilot.api.routers.personalized_chat import (
     router as personalized_chat_router,
 )
 from trader_intelligence_ai_copilot.config import get_settings
+from trader_intelligence_ai_copilot.observability import RequestObservabilityMiddleware
 
 settings = get_settings()
 
@@ -15,6 +16,7 @@ app = FastAPI(
     title=settings.app.name,
     version=settings.app.version,
 )
+app.add_middleware(RequestObservabilityMiddleware)
 
 app.include_router(health_router)
 app.include_router(auth_router)

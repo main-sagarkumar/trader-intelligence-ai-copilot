@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from trader_intelligence_ai_copilot.database.models import TraderMetricsModel
 from trader_intelligence_ai_copilot.repositories.trader_repository import TraderRepository
 from trader_intelligence_ai_copilot.trader import TraderProfile
+from trader_intelligence_ai_copilot.observability import metrics
 
 
 class PostgresTraderRepository(TraderRepository):
@@ -17,11 +18,12 @@ class PostgresTraderRepository(TraderRepository):
 
     def get_by_id(self, trader_id: str) -> TraderProfile | None:
         """Return a trader profile by its unique identifier, if it exists."""
-        trader_metrics = self._session.scalar(
-            select(TraderMetricsModel).where(
-                TraderMetricsModel.trader_id == trader_id
+        with metrics.timer("database_duration_ms"):
+            trader_metrics = self._session.scalar(
+                select(TraderMetricsModel).where(
+                    TraderMetricsModel.trader_id == trader_id
+                )
             )
-        )
 
         if trader_metrics is None:
             return None

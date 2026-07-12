@@ -4,6 +4,8 @@ from trader_intelligence_ai_copilot.chat import ChatResult, ContextBuilder, Hybr
 from trader_intelligence_ai_copilot.llm.base import BaseLLMProvider
 from trader_intelligence_ai_copilot.orchestration import TraderGraph
 from trader_intelligence_ai_copilot.prompts import HybridRAGPromptBuilder
+from trader_intelligence_ai_copilot.observability import metrics
+from trader_intelligence_ai_copilot.observability.events import log_event
 
 
 class GraphChatService:
@@ -21,7 +23,8 @@ class GraphChatService:
         retrieval_query: str | None = None,
     ) -> ChatResult:
         """Run authorized agent retrieval, merge context, and generate an answer."""
-        state = self._graph.invoke(retrieval_query or question, trader_id)
+        with metrics.timer("retrieval_duration_ms"):
+            state = self._graph.invoke(retrieval_query or question, trader_id)
         documents = [
             *state.get("trader_documents", []),
             *state.get("generic_documents", []),
@@ -36,5 +39,14 @@ class GraphChatService:
             conversation_history=conversation_history,
         )
         prompt = HybridRAGPromptBuilder.build_prompt_value(context)
-        answer = await self._llm.generate_response(prompt.to_messages())
+        with metrics.timer("llm_duration_ms"):
+            answer = await self._llm.generate_response(prompt.to_messages())
+        log_event(
+            "ai_route_completed",
+            route=state.get("route", "unknown"),
+            document_count=len(documents),
+            categories=sorted(
+                {str(document.metadata.get("category", "unknown")) for document in documents}
+            ),
+        )
         return ChatResult(answer=answer, sources=context.sources)

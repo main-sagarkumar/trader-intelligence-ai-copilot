@@ -12,6 +12,8 @@ from trader_intelligence_ai_copilot.retrieval.query_rewriter import (
     ConversationQueryRewriter,
 )
 from trader_intelligence_ai_copilot.guardrails import InputGuardrail, OutputGuardrail
+from trader_intelligence_ai_copilot.observability import anonymous_user_id, metrics
+from trader_intelligence_ai_copilot.observability.events import log_event
 
 
 class ConversationAccessError(Exception):
@@ -48,8 +50,10 @@ class MemoryChatService:
         user_id: UUID,
         session_id: UUID | None = None,
     ) -> MemoryChatResult:
-        input_result = InputGuardrail.evaluate(question)
+        with metrics.timer("input_guardrail_duration_ms"):
+            input_result = InputGuardrail.evaluate(question)
         if not input_result.allowed:
+            metrics.increment("guardrail_blocks_total")
             raise GuardrailViolation(",".join(input_result.reasons))
         safe_question = input_result.text
 
@@ -63,14 +67,23 @@ class MemoryChatService:
         history = self._repository.recent_messages(
             conversation.id, self._history_limit
         )
+        metrics.increment("memory_messages_loaded_total", len(history))
         formatted_history = "\n".join(
             f"{message.role}: {message.content}" for message in history
         )
         self._repository.add_message(conversation.id, "user", safe_question)
         if input_result.intervention_response is not None:
+            metrics.increment("guardrail_interventions_total")
             answer = input_result.intervention_response
             self._repository.add_message(conversation.id, "assistant", answer)
             self._repository.commit()
+            log_event(
+                "personalized_chat_completed",
+                user=anonymous_user_id(user_id),
+                session_id=str(conversation.id),
+                guardrail_reasons=input_result.reasons,
+                source_count=0,
+            )
             return MemoryChatResult(
                 conversation.id, answer, [], input_result.reasons
             )
@@ -78,18 +91,30 @@ class MemoryChatService:
         retrieval_query = ConversationQueryRewriter.rewrite(
             safe_question, formatted_history, trader_id
         )
-        result = await self._chat_service.chat(
-            safe_question,
-            trader_id,
-            conversation_history=formatted_history,
-            retrieval_query=retrieval_query,
-        )
-        output_result = OutputGuardrail.evaluate(
-            result.answer, trader_id, has_sources=bool(result.sources)
-        )
+        with metrics.timer("ai_pipeline_duration_ms"):
+            result = await self._chat_service.chat(
+                safe_question,
+                trader_id,
+                conversation_history=formatted_history,
+                retrieval_query=retrieval_query,
+            )
+        with metrics.timer("output_guardrail_duration_ms"):
+            output_result = OutputGuardrail.evaluate(
+                result.answer, trader_id, has_sources=bool(result.sources)
+            )
+        if output_result.reasons:
+            metrics.increment("guardrail_interventions_total")
         safe_answer = output_result.text
         self._repository.add_message(conversation.id, "assistant", safe_answer)
         self._repository.commit()
+        metrics.increment("retrieved_documents_total", len(result.sources))
+        log_event(
+            "personalized_chat_completed",
+            user=anonymous_user_id(user_id),
+            session_id=str(conversation.id),
+            guardrail_reasons=(*input_result.reasons, *output_result.reasons),
+            source_count=len(result.sources),
+        )
         return MemoryChatResult(
             conversation.id,
             safe_answer,
