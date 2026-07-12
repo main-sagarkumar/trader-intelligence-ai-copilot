@@ -114,6 +114,15 @@ language:
 uv run python -m scripts.evaluate_answers
 ```
 
+Generate sanitized predictions from the existing two-node LangGraph workflow.
+The local artifact is gitignored and records detected PII types without storing
+the raw PII:
+
+```powershell
+uv run python -m scripts.generate_evaluation_predictions
+uv run python -m scripts.evaluate_answers --input output/evaluation/gemini-predictions.json
+```
+
 ## Observability
 
 Every HTTP response includes `X-Request-ID`; callers may provide their own ID

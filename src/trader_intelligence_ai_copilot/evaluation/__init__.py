@@ -6,6 +6,7 @@ from trader_intelligence_ai_copilot.evaluation.answer_quality import (
     AnswerQualityEvaluator,
     AnswerQualityScores,
 )
+from trader_intelligence_ai_copilot.evaluation.prediction_runner import PredictionRunner
 
 __all__ = [
     "EvaluationReport",
@@ -16,4 +17,5 @@ __all__ = [
     "score_retrieval",
     "AnswerQualityEvaluator",
     "AnswerQualityScores",
+    "PredictionRunner",
 ]

@@ -25,3 +25,6 @@ data/chroma/
 # Logs
 logs/
 *.log
+
+# Local model evaluation artifacts
+output/evaluation/

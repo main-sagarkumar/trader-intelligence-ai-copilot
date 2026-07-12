@@ -18,6 +18,10 @@ class AnswerCase:
     expected_sources: tuple[str, ...]
     forbidden_claims: tuple[str, ...] = ()
     required_policy_terms: tuple[str, ...] = ()
+    detected_pii: tuple[str, ...] = ()
+    latency_ms: float = 0.0
+    model_version: str = "unknown"
+    prompt_version: str = "unknown"
 
 
 @dataclass(frozen=True, slots=True)
@@ -52,6 +56,7 @@ class AnswerQualityEvaluator:
                     "required_policy_terms": tuple(
                         item.get("required_policy_terms", ())
                     ),
+                    "detected_pii": tuple(item.get("detected_pii", ())),
                 }
             )
             for item in payload
@@ -84,7 +89,7 @@ class AnswerQualityEvaluator:
             else 1.0
         )
         _, pii_types = PIIRedactor.redact(case.answer)
-        pii_safety = float(not pii_types)
+        pii_safety = float(not pii_types and not case.detected_pii)
         financial_compliance = float(
             all(term.lower() in answer for term in case.required_policy_terms)
         )

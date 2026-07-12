@@ -2,6 +2,7 @@
 
 from dataclasses import fields
 from pathlib import Path
+import argparse
 
 from trader_intelligence_ai_copilot.evaluation.answer_quality import (
     AnswerQualityEvaluator,
@@ -9,8 +10,15 @@ from trader_intelligence_ai_copilot.evaluation.answer_quality import (
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--input",
+        type=Path,
+        default=Path("data/evaluation/answer_cases.json"),
+    )
+    args = parser.parse_args()
     cases = AnswerQualityEvaluator.load_cases(
-        Path("data/evaluation/answer_cases.json")
+        args.input
     )
     report = AnswerQualityEvaluator.run(cases)
     print(f"Cases: {report.case_count}")
