@@ -6,7 +6,7 @@ from trader_intelligence_ai_copilot.config.app.security import SecurityConfig
 from trader_intelligence_ai_copilot.config.infra.credentials import CredentialsConfig
 from trader_intelligence_ai_copilot.config.infra.database import DatabaseConfig
 from trader_intelligence_ai_copilot.config.infra.llm import LLMConfig
-
+from trader_intelligence_ai_copilot.config.infra.embeddings import EmbeddingsConfig
 class ApplicationSettings:
 
     def __init__(self):
@@ -16,6 +16,7 @@ class ApplicationSettings:
         self.database = DatabaseConfig()
         self.credentials = CredentialsConfig()
         self.llm = LLMConfig()
+        self.embeddings = EmbeddingsConfig()
 
 
 @lru_cache
