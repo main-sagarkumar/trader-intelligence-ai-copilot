@@ -1,0 +1,9 @@
+[
+  {"id":"cluster_definition","question":"What does Cluster 3 mean?","category":"trader_intelligence","relevance":{"cluster_explanations.pdf":3,"trader_improvement_plan.pdf":1}},
+  {"id":"trader_improvement","question":"How can a trader improve risk discipline?","category":"trader_intelligence","relevance":{"trader_improvement_plan.pdf":3,"recommendation_guide.pdf":2}},
+  {"id":"recommendation_guidance","question":"How should trader recommendations be interpreted?","category":"trader_intelligence","relevance":{"recommendation_guide.pdf":3,"trader_improvement_plan.pdf":1}},
+  {"id":"implied_volatility","question":"What is implied volatility?","category":"options","relevance":{"Options Theory for Professional Trading.pdf":3}},
+  {"id":"option_strategy","question":"Explain common option strategies and their risk.","category":"options","relevance":{"Option Strategies.pdf":3,"Options Theory for Professional Trading.pdf":2}},
+  {"id":"revenge_trading","question":"How can I avoid revenge trading?","category":"trading_psychology","relevance":{"Trading Psychology.pdf":3}},
+  {"id":"trading_emotions","question":"How do emotions affect trading decisions?","category":"trading_psychology","relevance":{"Trading Psychology.pdf":3}}
+]

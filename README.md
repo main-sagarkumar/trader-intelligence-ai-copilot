@@ -98,6 +98,14 @@ uv run python -m scripts.evaluate
 
 The command prints metric percentages and exits non-zero on any regression.
 
+Retriever quality uses labeled document relevance and reports Precision@k,
+Recall@k, Hit Rate, MRR, and NDCG. This command calls the configured embedding
+provider and therefore is intentionally separate from the offline gate:
+
+```powershell
+uv run python -m scripts.evaluate_retrieval
+```
+
 ## Observability
 
 Every HTTP response includes `X-Request-ID`; callers may provide their own ID

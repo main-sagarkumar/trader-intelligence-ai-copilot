@@ -5,6 +5,18 @@ from contextlib import contextmanager
 from threading import Lock
 from time import perf_counter
 from collections.abc import Iterator
+from typing import TypedDict
+
+
+class DurationSnapshot(TypedDict):
+    count: int
+    average_ms: float
+    maximum_ms: float
+
+
+class MetricsSnapshot(TypedDict):
+    counters: dict[str, float]
+    durations: dict[str, DurationSnapshot]
 
 
 class MetricsRegistry:
@@ -29,9 +41,9 @@ class MetricsRegistry:
         finally:
             self.observe(name, (perf_counter() - started) * 1000)
 
-    def snapshot(self) -> dict[str, object]:
+    def snapshot(self) -> MetricsSnapshot:
         with self._lock:
-            durations = {
+            durations: dict[str, DurationSnapshot] = {
                 name: {
                     "count": len(values),
                     "average_ms": sum(values) / len(values),
