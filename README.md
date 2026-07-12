@@ -137,6 +137,13 @@ Semantic and deterministic evaluation use custom metrics plus LangSmith. Ragas
 is intentionally excluded because its current release is incompatible with the
 project's LangChain version.
 
+Groundedness, hallucination rate, answer relevance, and faithfulness are scored
+by an opt-in judge over the sanitized local prediction artifact:
+
+```powershell
+uv run python -m scripts.evaluate_semantic --input output/evaluation/gemini-predictions.json
+```
+
 ## Observability
 
 Every HTTP response includes `X-Request-ID`; callers may provide their own ID

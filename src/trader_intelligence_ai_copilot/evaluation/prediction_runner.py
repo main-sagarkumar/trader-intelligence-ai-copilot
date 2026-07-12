@@ -2,7 +2,7 @@
 
 import json
 from collections.abc import Awaitable, Callable
-from dataclasses import asdict, replace
+from dataclasses import asdict, dataclass, replace
 from pathlib import Path
 from time import perf_counter
 
@@ -10,9 +10,15 @@ from trader_intelligence_ai_copilot.evaluation.answer_quality import AnswerCase
 from trader_intelligence_ai_copilot.guardrails.pii import PIIRedactor
 
 
-PredictionTarget = Callable[
-    [AnswerCase], Awaitable[tuple[str, list[str]]]
-]
+@dataclass(frozen=True, slots=True)
+class PredictionOutput:
+    answer: str
+    sources: list[str]
+    retrieved_contexts: list[str]
+    trader_facts: dict[str, str | int | float | None]
+
+
+PredictionTarget = Callable[[AnswerCase], Awaitable[PredictionOutput]]
 
 
 class PredictionRunner:
@@ -26,18 +32,23 @@ class PredictionRunner:
         predictions: list[AnswerCase] = []
         for case in cases:
             started = perf_counter()
-            answer, sources = await target(case)
+            output = await target(case)
             latency_ms = (perf_counter() - started) * 1000
-            sanitized_answer, pii_types = PIIRedactor.redact(answer)
+            sanitized_answer, pii_types = PIIRedactor.redact(output.answer)
+            sanitized_contexts = tuple(
+                PIIRedactor.redact(context)[0] for context in output.retrieved_contexts
+            )
             predictions.append(
                 replace(
                     case,
                     answer=sanitized_answer,
-                    sources=tuple(dict.fromkeys(sources)),
+                    sources=tuple(dict.fromkeys(output.sources)),
                     detected_pii=pii_types,
                     latency_ms=latency_ms,
                     model_version=model_version,
                     prompt_version=prompt_version,
+                    retrieved_contexts=sanitized_contexts,
+                    trader_facts=output.trader_facts,
                 )
             )
         return predictions

@@ -7,7 +7,10 @@ from trader_intelligence_ai_copilot.evaluation.answer_quality import (
     AnswerCase,
     AnswerQualityEvaluator,
 )
-from trader_intelligence_ai_copilot.evaluation.prediction_runner import PredictionRunner
+from trader_intelligence_ai_copilot.evaluation.prediction_runner import (
+    PredictionOutput,
+    PredictionRunner,
+)
 
 
 def build_case() -> AnswerCase:
@@ -23,7 +26,12 @@ def build_case() -> AnswerCase:
 
 def test_runner_sanitizes_answer_and_records_pii_signal() -> None:
     async def target(_case):
-        return "Expected variability. Contact trader@example.com", ["guide.pdf"]
+        return PredictionOutput(
+            "Expected variability. Contact trader@example.com",
+            ["guide.pdf"],
+            ["Context with analyst@example.com"],
+            {},
+        )
 
     predictions = asyncio.run(
         PredictionRunner.run([build_case()], target, "gemini-test", "prompt-v1")
@@ -33,12 +41,13 @@ def test_runner_sanitizes_answer_and_records_pii_signal() -> None:
     assert "trader@example.com" not in prediction.answer
     assert prediction.detected_pii == ("email",)
     assert prediction.model_version == "gemini-test"
+    assert "analyst@example.com" not in prediction.retrieved_contexts[0]
     assert AnswerQualityEvaluator.evaluate_case(prediction).pii_safety == 0.0
 
 
 def test_prediction_artifact_contains_no_raw_pii(tmp_path) -> None:
     async def target(_case):
-        return "Email trader@example.com", []
+        return PredictionOutput("Email trader@example.com", [], [], {})
 
     predictions = asyncio.run(
         PredictionRunner.run([build_case()], target, "model", "prompt")

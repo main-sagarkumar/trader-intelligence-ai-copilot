@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass(frozen=True, slots=True)
@@ -24,3 +24,5 @@ class ChatResult:
 
     answer: str
     sources: list[SourceReference]
+    retrieved_contexts: tuple[str, ...] = ()
+    trader_facts: dict[str, str | int | float | None] = field(default_factory=dict)

@@ -2,7 +2,7 @@
 
 import json
 import re
-from dataclasses import dataclass, fields
+from dataclasses import dataclass, field, fields
 from pathlib import Path
 
 from trader_intelligence_ai_copilot.guardrails.pii import PIIRedactor
@@ -22,6 +22,9 @@ class AnswerCase:
     latency_ms: float = 0.0
     model_version: str = "unknown"
     prompt_version: str = "unknown"
+    retrieved_contexts: tuple[str, ...] = ()
+    trader_facts: dict[str, str | int | float | None] = field(default_factory=dict)
+    reference_answer: str = ""
 
 
 @dataclass(frozen=True, slots=True)
@@ -57,6 +60,8 @@ class AnswerQualityEvaluator:
                         item.get("required_policy_terms", ())
                     ),
                     "detected_pii": tuple(item.get("detected_pii", ())),
+                    "retrieved_contexts": tuple(item.get("retrieved_contexts", ())),
+                    "trader_facts": dict(item.get("trader_facts", {})),
                 }
             )
             for item in payload

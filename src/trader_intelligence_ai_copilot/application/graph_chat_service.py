@@ -6,6 +6,7 @@ from trader_intelligence_ai_copilot.orchestration import TraderGraph
 from trader_intelligence_ai_copilot.prompts import HybridRAGPromptBuilder
 from trader_intelligence_ai_copilot.observability import metrics
 from trader_intelligence_ai_copilot.observability.events import log_event
+from dataclasses import asdict
 
 
 class GraphChatService:
@@ -49,4 +50,10 @@ class GraphChatService:
                 {str(document.metadata.get("category", "unknown")) for document in documents}
             ),
         )
-        return ChatResult(answer=answer, sources=context.sources)
+        profile = state.get("trader_profile")
+        return ChatResult(
+            answer=answer,
+            sources=context.sources,
+            retrieved_contexts=tuple(document.page_content for document in documents),
+            trader_facts=asdict(profile) if profile is not None else {},
+        )

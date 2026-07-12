@@ -12,6 +12,7 @@ from trader_intelligence_ai_copilot.config import get_settings
 from trader_intelligence_ai_copilot.database.session import SessionLocal, get_engine
 from trader_intelligence_ai_copilot.evaluation.answer_quality import AnswerQualityEvaluator
 from trader_intelligence_ai_copilot.evaluation.prediction_runner import PredictionRunner
+from trader_intelligence_ai_copilot.evaluation.prediction_runner import PredictionOutput
 from trader_intelligence_ai_copilot.llm.factory import get_llm
 from trader_intelligence_ai_copilot.orchestration import TraderGraph
 from trader_intelligence_ai_copilot.repositories import PostgresTraderRepository
@@ -37,7 +38,12 @@ async def main() -> None:
 
         async def target(case):
             result = await service.chat(case.question, "TRADER_101")
-            return result.answer, [source.document_name for source in result.sources]
+            return PredictionOutput(
+                answer=result.answer,
+                sources=[source.document_name for source in result.sources],
+                retrieved_contexts=list(result.retrieved_contexts),
+                trader_facts=result.trader_facts,
+            )
 
         predictions = await PredictionRunner.run(
             cases,
