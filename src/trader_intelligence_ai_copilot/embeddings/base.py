@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 from langchain_core.documents import Document
+from langchain_core.embeddings import Embeddings
 
 
 class BaseEmbeddingProvider(ABC):
@@ -20,4 +21,11 @@ class BaseEmbeddingProvider(ABC):
         text: str,
     ) -> list[float]:
         """Generate an embedding for a search query."""
+        ...
+
+    @abstractmethod
+    def embedding_function(
+        self,
+    ) -> Embeddings:
+        """Return the LangChain embedding implementation."""
         ...

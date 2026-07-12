@@ -7,6 +7,7 @@ from trader_intelligence_ai_copilot.config.infra.credentials import CredentialsC
 from trader_intelligence_ai_copilot.config.infra.database import DatabaseConfig
 from trader_intelligence_ai_copilot.config.infra.llm import LLMConfig
 from trader_intelligence_ai_copilot.config.infra.embeddings import EmbeddingsConfig
+from trader_intelligence_ai_copilot.config.infra.vectorstore import VectorStoreConfig
 class ApplicationSettings:
 
     def __init__(self):
@@ -17,6 +18,7 @@ class ApplicationSettings:
         self.credentials = CredentialsConfig()
         self.llm = LLMConfig()
         self.embeddings = EmbeddingsConfig()
+        self.vectorstore = VectorStoreConfig()
 
 
 @lru_cache

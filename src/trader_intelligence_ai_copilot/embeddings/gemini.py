@@ -1,5 +1,6 @@
 from langchain_core.documents import Document
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_core.embeddings import Embeddings
 
 from trader_intelligence_ai_copilot.config import get_settings
 from trader_intelligence_ai_copilot.embeddings.base import BaseEmbeddingProvider
@@ -34,3 +35,9 @@ class GeminiEmbeddingProvider(BaseEmbeddingProvider):
     ) -> list[float]:
 
         return self._embeddings.embed_query(text)
+    
+    def embedding_function(
+        self,
+    ) -> Embeddings:
+        """Return the LangChain embedding implementation."""
+        return self._embeddings
