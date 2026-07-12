@@ -13,7 +13,7 @@ class LLMConfig(BaseConfig):
     )
 
     model: str = Field(
-        default="gemini-2.5-flash",
+        default="gemini-flash-latest",
         alias="LLM_MODEL",
     )
 
