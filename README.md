@@ -86,3 +86,14 @@ redacted before retrieval, model calls, and conversation persistence, including
 email, Indian phone, Aadhaar, PAN, and payment-card patterns. Output guardrails
 scan for PII, credentials, database URLs, cross-trader identifiers, and answers
 without retrieved evidence.
+
+## Offline evaluation gate
+
+The golden dataset covers routing, retrieval categories, guardrail behavior,
+PII redaction, and trader authorization without calling an external model.
+
+```powershell
+uv run python -m scripts.evaluate
+```
+
+The command prints metric percentages and exits non-zero on any regression.

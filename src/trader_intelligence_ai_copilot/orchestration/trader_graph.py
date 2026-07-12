@@ -6,6 +6,7 @@ from langchain_core.documents import Document
 from langgraph.graph import END, START, StateGraph
 
 from trader_intelligence_ai_copilot.trader import TraderProfile
+from trader_intelligence_ai_copilot.orchestration.intent_router import IntentRouter
 
 
 class TraderAgent(Protocol):
@@ -66,13 +67,7 @@ class TraderGraph:
         return graph.compile()
 
     def _route(self, state: TraderGraphState) -> dict[str, object]:
-        question = state["question"].lower()
-        trader_terms = ("my ", "cluster", "profile", "improve", "leverage", "pnl")
-        generic_terms = ("option", "volatility", "psychology", "revenge", "emotion")
-        has_trader = any(term in question for term in trader_terms)
-        has_generic = any(term in question for term in generic_terms)
-        route: Literal["trader", "generic", "both"] = "both" if has_trader and has_generic else "trader" if has_trader else "generic"
-        return {"route": route}
+        return {"route": IntentRouter.classify(state["question"])}
 
     def _next(self, state: TraderGraphState) -> Literal["trader", "generic", "both"]:
         route = state.get("route")
