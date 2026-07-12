@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from trader_intelligence_ai_copilot.application.memory_chat_service import (
     ConversationAccessError,
+    GuardrailViolation,
     MemoryChatService,
 )
 from trader_intelligence_ai_copilot.api.dependencies import (
@@ -53,6 +54,11 @@ async def personalized_chat(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Conversation was not found.",
+        ) from error
+    except GuardrailViolation as error:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The request was blocked by an input safety policy.",
         ) from error
     return ChatResponse(
         session_id=result.session_id,

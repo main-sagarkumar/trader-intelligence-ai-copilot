@@ -9,7 +9,7 @@ from trader_intelligence_ai_copilot.application.memory_chat_service import (
     ConversationAccessError,
     MemoryChatService,
 )
-from trader_intelligence_ai_copilot.chat import ChatResult
+from trader_intelligence_ai_copilot.chat import ChatResult, SourceReference
 from trader_intelligence_ai_copilot.memory import ConversationMessage, ConversationSession
 
 
@@ -49,7 +49,10 @@ class FakeGraphService:
     ):
         self.history = conversation_history
         self.retrieval_query = retrieval_query
-        return ChatResult("Use lower leverage.", [])
+        return ChatResult(
+            "Use lower leverage.",
+            [SourceReference("guide.pdf", "trader_intelligence", 1, "guide.pdf")],
+        )
 
 
 def test_follow_up_uses_history_and_persists_turn() -> None:
@@ -77,3 +80,22 @@ def test_rejects_session_owned_by_another_user() -> None:
                 "Continue", "TRADER_101", uuid4(), repository.session.id
             )
         )
+
+
+def test_pii_is_redacted_before_memory_and_model() -> None:
+    repository = FakeConversationRepository()
+    graph = FakeGraphService()
+    service = MemoryChatService(graph, repository)
+
+    asyncio.run(
+        service.chat(
+            "My email is trader@example.com. How can I improve?",
+            "TRADER_101",
+            USER_ID,
+        )
+    )
+
+    stored_question = repository.messages[-2].content
+    assert "trader@example.com" not in stored_question
+    assert "[REDACTED_EMAIL]" in stored_question
+    assert "trader@example.com" not in graph.retrieval_query

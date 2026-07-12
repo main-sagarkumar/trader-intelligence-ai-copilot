@@ -77,3 +77,12 @@ Specialized agents apply category filters and Chroma MMR search to retrieve
 diverse evidence. Ambiguous follow-ups are rewritten deterministically from the
 latest user turn before retrieval, while the original wording remains in the
 prompt. Context and citations are deduplicated by document path and page.
+
+## AI safety and PII
+
+Input guardrails block prompt-injection attempts and convert guaranteed-profit
+or definitive trade requests into an educational safety response. PII is
+redacted before retrieval, model calls, and conversation persistence, including
+email, Indian phone, Aadhaar, PAN, and payment-card patterns. Output guardrails
+scan for PII, credentials, database URLs, cross-trader identifiers, and answers
+without retrieved evidence.

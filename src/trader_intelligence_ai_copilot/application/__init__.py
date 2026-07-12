@@ -7,6 +7,7 @@ from trader_intelligence_ai_copilot.application.graph_chat_service import GraphC
 
 from trader_intelligence_ai_copilot.application.memory_chat_service import (
     ConversationAccessError,
+    GuardrailViolation,
     MemoryChatResult,
     MemoryChatService,
 )
@@ -14,6 +15,7 @@ from trader_intelligence_ai_copilot.application.memory_chat_service import (
 __all__ = [
     "ConversationAccessError",
     "GraphChatService",
+    "GuardrailViolation",
     "HybridChatService",
     "MemoryChatResult",
     "MemoryChatService",
