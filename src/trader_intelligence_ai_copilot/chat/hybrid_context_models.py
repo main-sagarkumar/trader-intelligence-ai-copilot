@@ -17,3 +17,4 @@ class HybridContext(BaseModel):
     retrieved_documents: list[Document]
     knowledge_context: str
     sources: list[SourceReference]
+    conversation_history: str = ""

@@ -63,3 +63,17 @@ Useful graph-routing demonstrations:
 
 The personalized endpoint returns `403` when a non-admin requests a trader ID
 that is not assigned to their account.
+
+## Conversation memory
+
+The first personalized request may omit `session_id`; the response returns a
+new UUID. Send that UUID on follow-up requests to include the eight most recent
+messages. Sessions are bound to both the authenticated user and trader profile,
+so another user cannot resume them.
+
+## Intelligent retrieval
+
+Specialized agents apply category filters and Chroma MMR search to retrieve
+diverse evidence. Ambiguous follow-ups are rewritten deterministically from the
+latest user turn before retrieval, while the original wording remains in the
+prompt. Context and citations are deduplicated by document path and page.

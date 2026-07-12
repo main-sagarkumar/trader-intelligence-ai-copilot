@@ -8,9 +8,15 @@ from trader_intelligence_ai_copilot.database.models.auth import (
     UserRoleModel,
 )
 from trader_intelligence_ai_copilot.database.models.trader_metrics import TraderMetricsModel
+from trader_intelligence_ai_copilot.database.models.conversation import (
+    ChatMessageModel,
+    ChatSessionModel,
+)
 
 __all__ = [
     "RefreshTokenModel",
+    "ChatMessageModel",
+    "ChatSessionModel",
     "RoleModel",
     "TraderAccessModel",
     "TraderMetricsModel",

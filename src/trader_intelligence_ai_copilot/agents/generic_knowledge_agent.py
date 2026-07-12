@@ -23,8 +23,12 @@ class GenericKnowledgeAgent:
                 question,
                 k=k_per_category,
                 metadata_filter={"category": category},
+                search_type="mmr",
             ):
-                key = (document.page_content, str(document.metadata))
+                key = (
+                    str(document.metadata.get("relative_path", "")),
+                    str(document.metadata.get("page", "")),
+                )
                 if key not in seen:
                     seen.add(key)
                     documents.append(document)

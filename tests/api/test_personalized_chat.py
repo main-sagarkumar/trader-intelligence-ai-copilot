@@ -10,12 +10,14 @@ from trader_intelligence_ai_copilot.api.dependencies import (
 )
 from trader_intelligence_ai_copilot.api.main import app
 from trader_intelligence_ai_copilot.auth import AuthenticatedUser
-from trader_intelligence_ai_copilot.chat import ChatResult, SourceReference
+from trader_intelligence_ai_copilot.chat import SourceReference
+from trader_intelligence_ai_copilot.application.memory_chat_service import MemoryChatResult
 
 
 class FakeGraphChatService:
-    async def chat(self, question: str, trader_id: str) -> ChatResult:
-        return ChatResult(
+    async def chat(self, question, trader_id, user_id, session_id=None):
+        return MemoryChatResult(
+            session_id=UUID("00000000-0000-0000-0000-000000000099"),
             answer=f"Personalized answer for {trader_id}: {question}",
             sources=[SourceReference("guide.pdf", "trader_intelligence", 2, "guide.pdf")],
         )
@@ -44,6 +46,7 @@ def test_authorized_personalized_chat_returns_sources() -> None:
         app.dependency_overrides.clear()
 
     assert response.status_code == 200
+    assert response.json()["session_id"] == "00000000-0000-0000-0000-000000000099"
     assert response.json()["sources"][0]["document_name"] == "guide.pdf"
 
 

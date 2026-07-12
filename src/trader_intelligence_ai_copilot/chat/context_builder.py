@@ -35,6 +35,7 @@ class ContextBuilder:
 
         sections: list[str] = []
         sources: list[SourceReference] = []
+        seen_sources: set[tuple[str, str]] = set()
 
         for document in documents:
             metadata = document.metadata
@@ -57,6 +58,11 @@ class ContextBuilder:
                     cls.UNKNOWN,
                 ),
             )
+
+            source_key = (source.relative_path, str(source.page))
+            if source_key in seen_sources:
+                continue
+            seen_sources.add(source_key)
 
             sources.append(source)
 

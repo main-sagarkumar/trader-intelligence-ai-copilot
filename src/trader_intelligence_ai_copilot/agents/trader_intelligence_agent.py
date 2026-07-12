@@ -21,5 +21,6 @@ class TraderIntelligenceAgent:
             self._retriever.retrieve(
                 question,
                 metadata_filter={"category": "trader_intelligence"},
+                search_type="mmr",
             ),
         )

@@ -13,9 +13,15 @@ class GraphChatService:
         self._graph = graph
         self._llm = llm
 
-    async def chat(self, question: str, trader_id: str) -> ChatResult:
+    async def chat(
+        self,
+        question: str,
+        trader_id: str,
+        conversation_history: str = "",
+        retrieval_query: str | None = None,
+    ) -> ChatResult:
         """Run authorized agent retrieval, merge context, and generate an answer."""
-        state = self._graph.invoke(question, trader_id)
+        state = self._graph.invoke(retrieval_query or question, trader_id)
         documents = [
             *state.get("trader_documents", []),
             *state.get("generic_documents", []),
@@ -27,6 +33,7 @@ class GraphChatService:
             retrieved_documents=documents,
             knowledge_context=context_result.context,
             sources=context_result.sources,
+            conversation_history=conversation_history,
         )
         prompt = HybridRAGPromptBuilder.build_prompt_value(context)
         answer = await self._llm.generate_response(prompt.to_messages())

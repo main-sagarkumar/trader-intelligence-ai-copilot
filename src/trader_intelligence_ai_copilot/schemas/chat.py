@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from uuid import UUID
 
 
 class ChatRequest(BaseModel):
@@ -12,6 +13,7 @@ class PersonalizedChatRequest(BaseModel):
 
     question: str
     trader_id: str | None = None
+    session_id: UUID | None = None
 
 
 class SourceResponse(BaseModel):
@@ -28,3 +30,4 @@ class ChatResponse(BaseModel):
 
     answer: str
     sources: list[SourceResponse]
+    session_id: UUID | None = None

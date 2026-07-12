@@ -2,7 +2,10 @@
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from trader_intelligence_ai_copilot.application.graph_chat_service import GraphChatService
+from trader_intelligence_ai_copilot.application.memory_chat_service import (
+    ConversationAccessError,
+    MemoryChatService,
+)
 from trader_intelligence_ai_copilot.api.dependencies import (
     get_current_user,
     get_hybrid_chat_service,
@@ -21,7 +24,7 @@ router = APIRouter(prefix="/chat", tags=["Chat"])
 async def personalized_chat(
     request: PersonalizedChatRequest,
     user: AuthenticatedUser = Depends(get_current_user),
-    service: GraphChatService = Depends(get_hybrid_chat_service),
+    service: MemoryChatService = Depends(get_hybrid_chat_service),
 ) -> ChatResponse:
     """Answer with hybrid context only for a trader the caller may access."""
     trader_id = request.trader_id
@@ -39,8 +42,20 @@ async def personalized_chat(
             detail="You are not authorized to access this trader profile.",
         )
 
-    result = await service.chat(request.question, trader_id)
+    try:
+        result = await service.chat(
+            request.question,
+            trader_id,
+            user.id,
+            request.session_id,
+        )
+    except ConversationAccessError as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Conversation was not found.",
+        ) from error
     return ChatResponse(
+        session_id=result.session_id,
         answer=result.answer,
         sources=[
             SourceResponse(

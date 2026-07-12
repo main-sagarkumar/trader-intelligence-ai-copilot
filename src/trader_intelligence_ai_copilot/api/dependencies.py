@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from trader_intelligence_ai_copilot.application.auth_service import AuthService
 from trader_intelligence_ai_copilot.application.chat_service import ChatService
 from trader_intelligence_ai_copilot.application.graph_chat_service import GraphChatService
+from trader_intelligence_ai_copilot.application.memory_chat_service import MemoryChatService
 from trader_intelligence_ai_copilot.agents import GenericKnowledgeAgent, TraderIntelligenceAgent
 from trader_intelligence_ai_copilot.auth import AuthenticatedUser, InvalidTokenError, JWTService
 from trader_intelligence_ai_copilot.orchestration import TraderGraph
@@ -25,6 +26,9 @@ from trader_intelligence_ai_copilot.repositories.postgres_auth_repository import
 )
 from trader_intelligence_ai_copilot.repositories.postgres_trader_repository import (
     PostgresTraderRepository,
+)
+from trader_intelligence_ai_copilot.repositories.postgres_conversation_repository import (
+    PostgresConversationRepository,
 )
 
 _bearer_scheme = HTTPBearer()
@@ -76,16 +80,20 @@ def get_current_user(
 
 def get_hybrid_chat_service(
     session: Session = Depends(get_db_session),
-) -> GraphChatService:
+) -> MemoryChatService:
     """Build a hybrid service with request-scoped database access."""
     trader_repository = PostgresTraderRepository(session)
     retriever = get_retriever()
-    return GraphChatService(
+    graph_service = GraphChatService(
         llm=get_llm_provider(),
         graph=TraderGraph(
             trader_agent=TraderIntelligenceAgent(trader_repository, retriever),
             generic_agent=GenericKnowledgeAgent(retriever),
         ),
+    )
+    return MemoryChatService(
+        chat_service=graph_service,
+        repository=PostgresConversationRepository(session),
     )
 
 

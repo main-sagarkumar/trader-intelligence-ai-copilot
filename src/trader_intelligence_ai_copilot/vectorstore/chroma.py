@@ -40,5 +40,19 @@ class ChromaVectorStore(BaseVectorStore):
             filter=metadata_filter,
         )
 
+    def max_marginal_relevance_search(
+        self,
+        query: str,
+        k: int = 5,
+        fetch_k: int = 20,
+        metadata_filter: dict[str, str] | None = None,
+    ) -> list[Document]:
+        return self._vector_store.max_marginal_relevance_search(
+            query=query,
+            k=k,
+            fetch_k=fetch_k,
+            filter=metadata_filter,
+        )
+
     def reset(self) -> None:
         self._vector_store.reset_collection()

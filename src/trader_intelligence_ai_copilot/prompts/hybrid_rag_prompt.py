@@ -50,6 +50,10 @@ Knowledge Context:
 
 {knowledge_context}
 
+Recent Conversation History:
+
+{conversation_history}
+
 Question:
 
 {question}
@@ -67,6 +71,7 @@ Question:
                     context.trader_profile
                 ),
                 "knowledge_context": context.knowledge_context,
+                "conversation_history": context.conversation_history or "No previous messages.",
                 "question": context.user_question,
             }
         )

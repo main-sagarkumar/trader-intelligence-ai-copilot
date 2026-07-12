@@ -12,6 +12,7 @@ class BaseRetriever(ABC):
         query: str,
         k: int = 5,
         metadata_filter: dict[str, str] | None = None,
+        search_type: str = "similarity",
     ) -> list[Document]:
         """Retrieve relevant documents."""
         ...

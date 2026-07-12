@@ -18,6 +18,8 @@ from trader_intelligence_ai_copilot.database.models import (  # noqa: F401
     TraderMetricsModel,
     UserModel,
     UserRoleModel,
+    ChatMessageModel,
+    ChatSessionModel,
 )
 
 config = context.config
