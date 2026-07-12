@@ -17,3 +17,10 @@ class ContextResult:
 
     context: str
     sources: list[SourceReference]
+
+@dataclass(frozen=True, slots=True)
+class ChatResult:
+    """Result returned by the ChatService."""
+
+    answer: str
+    sources: list[SourceReference]

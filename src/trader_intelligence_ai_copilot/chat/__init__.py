@@ -4,10 +4,12 @@ from trader_intelligence_ai_copilot.chat.context_builder import (
 from trader_intelligence_ai_copilot.chat.context_models import (
     ContextResult,
     SourceReference,
+    ChatResult,
 )
 
 __all__ = [
     "ContextBuilder",
     "ContextResult",
     "SourceReference",
+    "ChatResult",
 ]

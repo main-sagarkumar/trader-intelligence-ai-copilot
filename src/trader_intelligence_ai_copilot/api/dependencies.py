@@ -5,6 +5,7 @@ from trader_intelligence_ai_copilot.knowledge.document_loader import DocumentLoa
 from trader_intelligence_ai_copilot.knowledge.document_processor import DocumentProcessor
 from trader_intelligence_ai_copilot.knowledge.ingest_service import IngestService
 from trader_intelligence_ai_copilot.vectorstore.factory import get_vector_store
+from trader_intelligence_ai_copilot.retrieval.factory import get_retriever
 
 
 
@@ -15,6 +16,7 @@ def get_llm_provider() -> BaseLLMProvider:
 def get_chat_service() -> ChatService:
     return ChatService(
         llm=get_llm_provider(),
+        retriever=get_retriever(),
     )
 
 
