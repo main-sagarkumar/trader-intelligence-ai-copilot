@@ -106,6 +106,14 @@ provider and therefore is intentionally separate from the offline gate:
 uv run python -m scripts.evaluate_retrieval
 ```
 
+Recorded answer predictions are scored locally for trader-fact accuracy,
+forbidden claims, citation precision/recall, PII leakage, and financial-policy
+language:
+
+```powershell
+uv run python -m scripts.evaluate_answers
+```
+
 ## Observability
 
 Every HTTP response includes `X-Request-ID`; callers may provide their own ID

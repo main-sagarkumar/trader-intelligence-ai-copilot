@@ -1,0 +1,39 @@
+[
+  {
+    "id": "cluster_explanation",
+    "question": "Why am I Cluster 3?",
+    "answer": "Your recorded cluster is 3 and your average leverage is 2.4. The cluster guide provides the behavioral interpretation.",
+    "sources": ["cluster_explanations.pdf"],
+    "expected_facts": {"cluster": 3, "avg_leverage": 2.4},
+    "expected_sources": ["cluster_explanations.pdf"],
+    "forbidden_claims": ["cluster 4", "leverage is 3.1"]
+  },
+  {
+    "id": "option_volatility",
+    "question": "What is implied volatility?",
+    "answer": "Implied volatility reflects the market's expected future variability and is derived from option prices.",
+    "sources": ["Options Theory for Professional Trading.pdf"],
+    "expected_facts": {"definition": "expected future variability"},
+    "expected_sources": ["Options Theory for Professional Trading.pdf"],
+    "forbidden_claims": ["guarantees the future price"]
+  },
+  {
+    "id": "risk_improvement",
+    "question": "How can I improve risk discipline?",
+    "answer": "Use a documented risk plan and apply stop-loss rules consistently. This is educational guidance, not a guarantee of profit.",
+    "sources": ["trader_improvement_plan.pdf", "recommendation_guide.pdf"],
+    "expected_facts": {"guidance": "stop-loss rules"},
+    "expected_sources": ["trader_improvement_plan.pdf", "recommendation_guide.pdf"],
+    "forbidden_claims": ["risk-free"],
+    "required_policy_terms": ["educational", "not a guarantee"]
+  },
+  {
+    "id": "psychology",
+    "question": "How can I avoid revenge trading?",
+    "answer": "Pause after losses, follow predefined limits, and review emotional triggers before placing another trade.",
+    "sources": ["Trading Psychology.pdf"],
+    "expected_facts": {"action": "emotional triggers"},
+    "expected_sources": ["Trading Psychology.pdf"],
+    "forbidden_claims": ["double your position"]
+  }
+]
