@@ -123,6 +123,20 @@ uv run python -m scripts.generate_evaluation_predictions
 uv run python -m scripts.evaluate_answers --input output/evaluation/gemini-predictions.json
 ```
 
+Sanitized predictions can be uploaded to an explicitly enabled LangSmith code
+evaluation. Raw contexts, trader profiles, credentials, and pre-redaction PII
+are excluded:
+
+```powershell
+$env:LANGSMITH_ENABLED="true"
+$env:LANGSMITH_API_KEY="..."
+uv run python -m scripts.evaluate_langsmith
+```
+
+Semantic and deterministic evaluation use custom metrics plus LangSmith. Ragas
+is intentionally excluded because its current release is incompatible with the
+project's LangChain version.
+
 ## Observability
 
 Every HTTP response includes `X-Request-ID`; callers may provide their own ID
