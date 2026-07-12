@@ -32,10 +32,12 @@ class ChromaVectorStore(BaseVectorStore):
         self,
         query: str,
         k: int = 5,
+        metadata_filter: dict[str, str] | None = None,
     ) -> list[Document]:
         return self._vector_store.similarity_search(
             query=query,
             k=k,
+            filter=metadata_filter,
         )
 
     def reset(self) -> None:

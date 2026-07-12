@@ -7,6 +7,13 @@ class ChatRequest(BaseModel):
     question: str
 
 
+class PersonalizedChatRequest(BaseModel):
+    """Question for the authenticated hybrid chat experience."""
+
+    question: str
+    trader_id: str | None = None
+
+
 class SourceResponse(BaseModel):
     """Knowledge source used to generate the answer."""
 

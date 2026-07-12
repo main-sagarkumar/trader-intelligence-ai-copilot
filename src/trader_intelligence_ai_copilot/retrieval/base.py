@@ -11,6 +11,7 @@ class BaseRetriever(ABC):
         self,
         query: str,
         k: int = 5,
+        metadata_filter: dict[str, str] | None = None,
     ) -> list[Document]:
         """Retrieve relevant documents."""
         ...

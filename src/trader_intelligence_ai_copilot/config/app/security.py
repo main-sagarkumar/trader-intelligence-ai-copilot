@@ -20,3 +20,18 @@ class SecurityConfig(BaseConfig):
         default=60,
         alias="ACCESS_TOKEN_EXPIRE_MINUTES",
     )
+
+    refresh_token_expire_days: int = Field(
+        default=7,
+        alias="REFRESH_TOKEN_EXPIRE_DAYS",
+    )
+
+    jwt_issuer: str = Field(
+        default="trader-intelligence-ai-copilot",
+        alias="JWT_ISSUER",
+    )
+
+    jwt_audience: str = Field(
+        default="trader-intelligence-ai-copilot-api",
+        alias="JWT_AUDIENCE",
+    )
